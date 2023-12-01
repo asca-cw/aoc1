@@ -75,16 +75,17 @@ fn converte_keys(data: String) -> String {
                 }
                 
             }
-            while key_pos.len() >0{
-                let min_val = key_pos.iter().min().unwrap();
-                let min_pos = key_pos.iter().position(|&x| x == *min_val).unwrap();
+            while key_pos.len() > 0{
+                let min_val = *key_pos.iter().min().unwrap();
+                let min_pos = key_pos.iter().position(|&x| x == min_val).unwrap();
 
                 let use_key = key_found[min_pos].clone();
                 key_pos.remove(min_pos);
                 key_found.remove(min_pos);
                 for (j,key) in key_words.clone().into_iter().enumerate(){
                     if key.eq(&use_key){
-                        my_line = my_line.replace(key.as_str(), (j+1).to_string().as_str());
+                        let rep_str = key.clone() + (j+1).to_string().as_str()  + &key.clone();
+                        my_line = my_line.replace(key.as_str(), rep_str.as_str());
                     }
                 }
 
@@ -104,6 +105,7 @@ fn main() {
     data = converte_keys(data);
 
     let value_line: Vec<u32> = parse_line(data);
+
 
     let sum: u32 = value_line.iter().sum();
 
