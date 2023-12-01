@@ -8,7 +8,7 @@
 ***********************************************/
 
 
-use std::fs;
+use std::{fs, usize};
 
 fn read_file(path: String) -> String{
 
@@ -41,12 +41,68 @@ fn parse_line(data: String)->Vec<u32> {
     return data_vec;
 
 }
+fn converte_keys(data: String) -> String {
+
+
+    let mut my_data = String::new();
+    let key_words: Vec<String> = vec![
+        String::from("one"),
+        String::from("two"),
+        String::from("three"),
+        String::from("four"),
+        String::from("five"),
+        String::from("six"),
+        String::from("seven"),
+        String::from("eight"),
+        String::from("nine"),
+    ];
+
+    for line in data.lines() {
+
+        let mut my_line = line.to_string();
+
+        let mut key_pos: Vec<usize> = Vec::new();
+        let mut key_found: Vec<String> = Vec::new();
+
+            for key in key_words.clone().into_iter(){
+                let pos: Option<usize> = my_line.find(key.as_str());
+                match pos{
+                    Some(x) =>{
+                        key_pos.push(x);
+                        key_found.push(key);
+                    },
+                    None => {},
+                }
+                
+            }
+            while key_pos.len() >0{
+                let min_val = key_pos.iter().min().unwrap();
+                let min_pos = key_pos.iter().position(|&x| x == *min_val).unwrap();
+
+                let use_key = key_found[min_pos].clone();
+                key_pos.remove(min_pos);
+                key_found.remove(min_pos);
+                for (j,key) in key_words.clone().into_iter().enumerate(){
+                    if key.eq(&use_key){
+                        my_line = my_line.replace(key.as_str(), (j+1).to_string().as_str());
+                    }
+                }
+
+            }
+            my_data = my_data + &my_line + "\n";
+    }
+    return my_data;
+
+}
+
 
 
 fn main() {
     let path: String = String::from("./data.txt");
 
-    let data: String = read_file(path);
+    let mut data: String = read_file(path);
+    data = converte_keys(data);
+
     let value_line: Vec<u32> = parse_line(data);
 
     let sum: u32 = value_line.iter().sum();
