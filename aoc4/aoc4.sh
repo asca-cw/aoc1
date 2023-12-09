@@ -1,4 +1,3 @@
-
 data="./data.txt"; result=0
 while read -r line; do
 win_nr=(); card_nr=(); res=0; tmp=(`echo $(echo $line | grep -o -E '[0-9]{1,3}')`)
