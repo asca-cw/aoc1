@@ -11,6 +11,8 @@ class aoc3{
     private valid_coord: number[][];
     private numbers: any [];
 
+    private gear_ratio:any [];
+
     constructor(path:string) { 
         let data:string = this.fs.readFileSync(path,'utf8');
         this.num_pos = [];
@@ -20,6 +22,7 @@ class aoc3{
 
         this.valid_coord = [];
         this.numbers = [];
+        this.gear_ratio = [];
 
         let lines:any = [];
         data.split('\n').forEach((line, i) =>{
@@ -70,10 +73,9 @@ class aoc3{
     }
 
     map_valid(){
-        console.log(this.num_pos)
         this.valid_coord.forEach((val) => {
             let x = val[0];
-            let y = val [1]
+            let y = val [1];
 
             if (this.num_pos[x].includes(y)){
                 let tmp = [];
@@ -104,22 +106,76 @@ class aoc3{
         });
     }
 
+    map_2(){
+        for (let i:number = 0; i<this.gear_pos.length; i++){
+            for (let j:number = 0; j<this.gear_pos[i].length; j++){
+                let tmp = [];
+
+                tmp.push([i-1, this.gear_pos[i][j]-1]);
+                tmp.push([i-1, this.gear_pos[i][j]]);
+                tmp.push([i-1, this.gear_pos[i][j]+1]);
+                tmp.push([i, this.gear_pos[i][j]-1]);
+                tmp.push([i, this.gear_pos[i][j]+1]);
+                tmp.push([i+1, this.gear_pos[i][j]-1]);
+                tmp.push([i+1, this.gear_pos[i][j]]);
+                tmp.push([i+1, this.gear_pos[i][j]+1]);
+
+                let nrs:any = [];
+                tmp.forEach((val) => {
+                    let x = val[0];
+                    let y = val [1];
+                    if (this.num_pos[x].includes(y)){
+                        let sub_tmp = [];
+                        sub_tmp.push(this.data[x][y]);
+
+                        let index = this.num_pos[x].indexOf(y);
+                        this.num_pos[x].splice(index, 1); 
+
+                        let start = 1;
+                        let stop = 1;
+                        while(this.num_pos[x].includes(y-start)){
+                            sub_tmp.unshift(this.data[x][y-start]);
+                            let index = this.num_pos[x].indexOf(y-start);
+                            this.num_pos[x].splice(index, 1); 
+                            start += 1;
+
+                        }
+                        while(this.num_pos[x].includes(y+stop)){
+                            sub_tmp.push(this.data[x][y+stop]);
+                            let index = this.num_pos[x].indexOf(y+stop);
+                            this.num_pos[x].splice(index, 1); 
+                            stop += 1;
+
+                        }
+
+                        nrs.push(Number(sub_tmp.join().replaceAll(",", "")))
+                    }
+
+                });
+                if (nrs.length == 2){
+                    this.gear_ratio.push(nrs[0] * nrs[1]);
+                }
+            }
+        }
+    }
     print_sum(){
         let sum: number = 0;
-
-        console.log(this.numbers);
         this.numbers.forEach(x => sum += x);
         console.log(sum)
 
     }
-    print(){
-        console.log(this.gear_pos)
+    print_sum2(){
+        let sum: number = 0;
+        this.gear_ratio.forEach(x => sum += x);
+        console.log(sum)
     }
-
 }
 
 let obj = new aoc3("./data.txt")
 obj.cal_valid_coord()
 obj.map_valid()
 obj.print_sum()
-// obj.print()
+
+let obj1 = new aoc3("./data.txt")
+obj1.map_2()
+obj1.print_sum2()
